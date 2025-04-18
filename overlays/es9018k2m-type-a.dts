@@ -1,0 +1,46 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2711";
+
+    fragment@0 {
+        target = <&i2s>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@1 {
+        target-path = "/";
+        __overlay__ {
+            es9018_dac: es9018-sound {
+                compatible = "simple-audio-card";
+                simple-audio-card,name = "ES9018K2M-MCLK";
+                simple-audio-card,format = "i2s";
+                simple-audio-card,mclk-fs = <256>;
+
+                simple-audio-card,cpu {
+                    sound-dai = <&i2s>;
+                };
+
+                simple-audio-card,codec {
+                    sound-dai = <&es9018_codec>;
+                    clocks = <&clk_gpio4>;
+                    clock-names = "mclk";
+                };
+            };
+
+            es9018_codec: es9018_codec@0 {
+                compatible = "ess,es9018";
+                #sound-dai-cells = <0>;
+            };
+
+            clk_gpio4: clk-gpio4 {
+                compatible = "fixed-clock";
+                #clock-cells = <0>;
+                clock-frequency = <11289600>;
+            };
+        };
+    };
+};
